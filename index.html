@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System OS Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
+
+    <div class="bg-white border border-gray-200 p-10 rounded-3xl shadow-sm max-w-md w-full text-center">
+
+        <div id="icon-wrapper" class="mx-auto w-24 h-24 mb-6 flex items-center justify-center rounded-2xl transition-colors duration-500">
+            <svg id="os-svg" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-12 h-12" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+            </svg>
+        </div>
+
+        <span class="text-xs font-bold tracking-widest text-indigo-600 uppercase">System Intelligence</span>
+        <h1 id="os-name" class="text-3xl font-bold text-gray-900 mt-1">Detecting...</h1>
+
+        <p class="mt-4 text-gray-500 text-sm leading-relaxed">
+            Your browser reports the following operating system environment based on user-agent analysis.
+        </p>
+
+        <div class="mt-8 pt-6 border-t border-gray-100">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Live Agent String</span>
+            </div>
+            <code id="ua-string" class="text-[10px] text-gray-400 font-mono block bg-gray-50 p-3 rounded-lg break-all"></code>
+        </div>
+    </div>
+
+    <script>
+        // SVG Path Data
+        const icons = {
+            Windows: "M3 5.5V11h8V3L3 5.5zm10-2.5v8h8V5.5L13 3zM3 18.5L11 21v-8H3v5.5zm10 2.5l8-2.5V13h-8v8z",
+            MacOS: "M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.78 1.18-.19 2.31-.89 3.59-.84 1.5.06 2.65.59 3.39 1.63-3.13 1.87-2.61 6.13.52 7.39-.61 1.55-1.4 3.1-2.58 4.01zM12.03 7.25c-.02-2.23 1.75-4.08 3.9-4.25.3 2.58-2.51 4.49-3.9 4.25z",
+            Android: "M7 11c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm10 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM14.73 3.77L16.2 2.3c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-1.53 1.53c1.55 1.1 2.63 2.82 2.87 4.77H5.05c.24-1.95 1.32-3.67 2.87-4.77L6.39 3.71c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.47 1.47c1.1-.44 2.3-.69 3.53-.71 1.22.02 2.43.27 3.53.71zM5 11h14v7c0 1.66-1.34 3-3 3H8c-1.66 0-3-1.34-3-3v-7z",
+            iOS: "M16.5 6a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h1a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5h-1z M12.5 9a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h1a.5.5 0 00.5-.5v-8a.5.5 0 00-.5-.5h-1z M8.5 12a.5.5 0 00-.5.5v5a.5.5 0 00.5.5h1a.5.5 0 00.5-.5v-5a.5.5 0 00-.5-.5h-1z M4.5 15a.5.5 0 00-.5.5v2a.5.5 0 00.5.5h1a.5.5 0 00.5-.5v-2a.5.5 0 00-.5-.5h-1z",
+            Linux: "M12 2c-.933 0-1.844.135-2.701.391-.497.148-.962.368-1.383.652-.405.27-.751.597-1.018.966-.264.363-.448.756-.541 1.157-.091.391-.115.772-.083 1.127.031.348.118.665.25.942.128.271.291.503.479.691.185.185.385.334.59.444.2.107.404.18.601.224.195.044.377.059.54.048.158-.01.295-.044.409-.1.109-.053.2-.124.275-.208.072-.081.128-.175.168-.28.037-.1.058-.207.062-.317.004-.108-.01-.219-.041-.33-.031-.113-.079-.224-.143-.33-.064-.107-.145-.206-.239-.296-.094-.092-.198-.172-.311-.24-.114-.067-.234-.121-.362-.161-.132-.04-.265-.065-.4-.075-.138-.009-.272-.003-.404.017a2.536 2.536 0 0 0-.422.103c-.139.046-.27.108-.393.185-.124.077-.236.17-.336.277-.099.106-.184.225-.255.357s-.125.278-.163.435c-.039.157-.06.326-.06.505 0 .178.021.348.06.505.038.157.092.303.163.435s.156.251.255.357c.1.107.212.2.336.277.123.077.254.139.393.185.14.046.28.081.422.103.132.021.266.026.404.017.135-.009.268-.035.4-.075.128-.04.248-.094.362-.161.113-.068.217-.148.311-.24.094-.09.175-.189.239-.296.064-.106.112-.217.143-.33s.045-.222.041-.33c-.004-.11-.025-.217-.062-.317a.837.837 0 0 0-.168-.28.703.703 0 0 0-.275-.208c-.114-.056-.251-.09-.409-.1-.163-.011-.345.004-.54.048-.197.044-.401.117-.601.224-.205.11-.405.259-.59.444-.188.188-.351.42-.479.691a2.158 2.158 0 0 0-.25.942c-.032.355-.008.736.083 1.127.093.401.277.794.541 1.157.267.369.613.696 1.018.966.421.284.886.504 1.383.652A7.994 7.994 0 0 0 12 22a7.994 7.994 0 0 0 2.701-.473c.497-.148.962-.368 1.383-.652.405-.27.751-.597 1.018-.966.264-.363.448-.756.541-1.157.091-.391.115-.772.083-1.127a2.158 2.158 0 0 0-.25-.942c-.128-.271-.291-.503-.479-.691-.185-.185-.385-.334-.59-.444-.2-.107-.404-.18-.601-.224-.195-.044-.377-.059-.54-.048-.158.01-.295.044-.409.1-.109.053-.2.124-.275.208-.072.081-.128.175-.168.28-.037.1-.058.207.062.317.004.108.01.219.041.33.031.113.079.224.143.33.064.107.145.206.239.296.094.092.198.172.311.24.114.067.234.121.362.161.132.04.265.065.4.075.138.009.272.003.404-.017.142-.022.282-.057.422-.103.123-.046.254-.108.393-.185.124-.077.236-.17.336-.277.099-.106.184-.225.255-.357.071-.132.125-.278.163-.435.039-.157.06-.326.06-.505 0-.179-.021-.348-.06-.505-.038-.157-.092-.303-.163-.435a1.444 1.444 0 0 0-.255-.357c-.1-.107-.212-.2-.336-.277a2.031 2.031 0 0 0-.393-.185c-.14-.046-.28-.081-.422-.103-.132-.021-.266-.026-.404-.017-.135.009-.268.035-.4.075-.128.04-.248.094.362.161.113.068.217.148.311.24s.175.189.239.296c.064.106.112.217.143.33s.045.222.041.33c-.004.11-.025.217-.062.317a.837.837 0 0 1-.168.28.703.703 0 0 1-.275.208c-.114.056-.251.09-.409.1-.163.011-.345-.004-.54-.048-.197-.044-.401-.117-.601-.224-.205-.11-.405-.259-.59-.444-.188-.188-.351-.42-.479-.691a2.158 2.158 0 0 1-.25-.942c-.032-.355-.008-.736.083-1.127.093-.401.277-.794.541-1.157.267-.369.613-.696 1.018-.966.421-.284.886-.504 1.383-.652A7.994 7.994 0 0 1 12 2z"
+        };
+
+        const themes = {
+            Android: "bg-emerald-50 text-emerald-600",
+            iOS: "bg-slate-900 text-white",
+            Windows: "bg-blue-50 text-blue-600",
+            MacOS: "bg-gray-100 text-gray-900",
+            Linux: "bg-orange-50 text-orange-600",
+            Unknown: "bg-gray-100 text-gray-400"
+        };
+
+        function detectOS() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (/android/i.test(userAgent)) return "Android";
+            if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return "iOS";
+            if (/Win/i.test(userAgent)) return "Windows";
+            if (/Mac/i.test(userAgent)) return "MacOS";
+            if (/Linux/i.test(userAgent)) return "Linux";
+            return "Unknown";
+        }
+
+        function updateUI() {
+            const os = detectOS();
+            const osNameElem = document.getElementById('os-name');
+            const uaStringElem = document.getElementById('ua-string');
+            const svgElem = document.getElementById('os-svg');
+            const wrapperElem = document.getElementById('icon-wrapper');
+
+            // Set Text
+            osNameElem.innerText = os;
+            uaStringElem.innerText = navigator.userAgent;
+
+            // Set Theme and Icon
+            wrapperElem.className = `mx-auto w-24 h-24 mb-6 flex items-center justify-center rounded-3xl transition-all duration-500 ${themes[os] || themes.Unknown}`;
+
+            if (icons[os]) {
+                svgElem.innerHTML = `<path d="${icons[os]}"/>`;
+            }
+        }
+
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
