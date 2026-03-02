@@ -1,0 +1,11 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+    <style>
+        @media(prefers-color-scheme:dark){.bg{fill:#1e293b}.ring{fill:#6366f1}.icon{fill:#e0e7ff}}
+        @media(prefers-color-scheme:light){.bg{fill:#eef2ff}.ring{fill:#4f46e5}.icon{fill:#312e81}}
+    </style>
+    <rect class='bg' width='32' height='32' rx='8'/>
+    <path class='icon' d='M7 8h18a2 2 0 012 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2v-8a2 2 0 012-2z'/>
+    <rect class='ring' x='10' y='21' width='12' height='2' rx='1'/>
+    <rect class='bg' x='8' y='11' width='16' height='8' rx='1'/>
+    <circle class='ring' cx='16' cy='15' r='2'/>
+</svg>
